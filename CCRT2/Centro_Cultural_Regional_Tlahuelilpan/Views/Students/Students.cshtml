@@ -1,0 +1,77 @@
+﻿@model List<Centro_Cultural_Regional_Tlahuelilpan.Models.DBCRUDCORE.Alumno>
+@{
+    ViewData["Title"] = "Listado de Alumnos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/views/students/students.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+}
+
+<div class="students-container">
+    <div class="students-header">
+        <h1 class="students-title">Listado de Alumnos</h1>
+        <a class="btn-add-teacher" asp-action="CreateEditStudent" asp-controller="Students">
+            <i class="fas fa-plus"></i> Agregar Alumno
+        </a>
+        <a asp-action="GraduatesList" asp-controller="Students" class="btn-graduates">
+            <i class="fas fa-user-graduate"></i> Ver Alumnos Egresados
+        </a>
+        @* <a asp-controller="Dashboard" asp-action="Home" class="btn-action btn-edit">
+            <i class="fas fa-times"></i> Cancelar
+        </a> *@
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var alumno in Model)
+                    {
+                        <tr>
+                            <td>@alumno.AlumnoId</td>
+                            <td>@alumno.Nombre @alumno.ApellidoPaterno @alumno.ApellidoMaterno</td>
+                            <td>@alumno.Edad</td>
+                            <td>@alumno.NumeroTelefono</td>
+                            <td class="actions-cell">
+                                <a asp-action="CreateEditStudent" asp-controller="Students" asp-route-id="@alumno.AlumnoId"
+                                   class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a asp-action="DeleteStudent" asp-controller="Students" asp-route-id="@alumno.AlumnoId"
+                                   class="btn-action btn-delete">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </a>
+                                <a asp-action="Details" asp-controller="Students" asp-route-id="@alumno.AlumnoId"
+                                   class="btn-action btn-info">
+                                    <i class="fas fa-info-circle"></i> Detalles
+                                </a>
+                                <a asp-action="AddToGroup" asp-controller="Students" asp-route-id="@alumno.AlumnoId"
+                                   class="btn-action btn-group">
+                                    <i class="fas fa-users"></i> Grupo
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="no-students">
+            <i class="fas fa-user-graduate"></i> No hay alumnos registrados
+        </div>
+    }
+</div>

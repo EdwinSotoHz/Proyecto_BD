@@ -1,0 +1,103 @@
+﻿@model Centro_Cultural_Regional_Tlahuelilpan.Models.ViewModels.DashboardVM
+@{
+    ViewData["Title"] = "Administración";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/views/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Dashboard de Gestión Educativa</h1>
+
+    <div class="cards-grid">
+        <!-- Talleres -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Talleres</h2>
+                <div class="card-icon">
+                    <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
+                    <animated-icons src="https://animatedicons.co/get-icon?name=Violin&style=minimalistic&token=9c840f28-8274-4ee6-b5b3-7707bde20ce4"
+                                    trigger="hover"
+                                    attributes='{"variationThumbColour":"#536DFE","variationName":"Two Tone","variationNumber":2,"numberOfGroups":2,"backgroundIsGroup":false,"strokeWidth":1,"defaultColours":{"group-1":"#000000","group-2":"#536DFE","background":"#FFFFFF"}}'
+                                    height="120"
+                                    width="120"></animated-icons>
+                </div>
+            </div>
+            <div class="card-value">@Model.TotalTalleres</div>
+            <p class="card-description">Administra los talleres disponibles. Crea, edita o elimina talleres.</p>
+            <div class="card-actions">
+                <button onclick="location.href='@Url.Action("Workshops", "Workshops")'" class="action-btn view-btn">Ver talleres</button>
+                <button onclick="location.href='@Url.Action("CreateEditWorkshop", "Workshops", new { TallerId = 0 })'" class="action-btn add-btn">Agregar Taller</button>
+            </div>
+        </div>
+
+        <!-- Docentes -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Docentes</h2>
+                <div class="card-icon">
+                    <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
+                    <animated-icons src="https://animatedicons.co/get-icon?name=Old%20Man&style=minimalistic&token=d766d1d6-7f63-40b7-81a8-4b28910eec76"
+                                    trigger="hover"
+                                    attributes='{"variationThumbColour":"#536DFE","variationName":"Two Tone","variationNumber":2,"numberOfGroups":2,"backgroundIsGroup":false,"strokeWidth":1,"defaultColours":{"group-1":"#000000","group-2":"#536DFE","background":"#FFFFFF"}}'
+                                    height="120"
+                                    width="120"></animated-icons>
+                </div>
+            </div>
+            <div class="card-value">@Model.TotalDocentes</div>
+            <p class="card-description">Gestiona los docentes y sus credenciales de acceso.</p>
+            <div class="card-actions">
+                <button onclick="location.href='@Url.Action("Teachers", "Teachers")'" class="action-btn view-btn">Ver docentes</button>
+                <button onclick="location.href='@Url.Action("CreateEditTeacherUser", "Teachers", new { UsuarioId = 0 })'" class="action-btn add-btn">Agregar Docente</button>
+            </div>
+        </div>
+
+        <!-- Grupos -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Grupos</h2>
+                <div class="card-icon">
+                    <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
+                    <animated-icons src="https://animatedicons.co/get-icon?name=Team&style=minimalistic&token=9c840f28-8274-4ee6-b5b3-7707bde20ce4"
+                                    trigger="hover"
+                                    attributes='{"variationThumbColour":"#536DFE","variationName":"Two Tone","variationNumber":2,"numberOfGroups":2,"backgroundIsGroup":false,"strokeWidth":1,"defaultColours":{"group-1":"#000000","group-2":"#536DFE","background":"#FFFFFF"}}'
+                                    height="120"
+                                    width="120"></animated-icons>
+                </div>
+            </div>
+            <div class="card-value">@Model.TotalGrupos</div>
+            <p class="card-description">Administra los grupos de cada taller con sus horarios.</p>
+            <div class="card-actions">
+                <button onclick="location.href='@Url.Action("Groups", "Groups")'" class="action-btn view-btn">Ver grupos</button>
+                <button onclick="location.href='@Url.Action("CreateEditGroup", "Groups", new { grupoId = 0 })'" class="action-btn add-btn">Agregar Grupo</button>
+            </div>
+        </div>
+
+        <!-- Alumnos -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Alumnos</h2>
+                <div class="card-icon">
+                    <script src="https://animatedicons.co/scripts/embed-animated-icons.js"></script>
+                    <animated-icons src="https://animatedicons.co/get-icon?name=Academic%20Background&style=minimalistic&token=fcb0569d-9cc8-4c8a-bbfa-cf46744e4770"
+                                    trigger="hover"
+                                    attributes='{"variationThumbColour":"#536DFE","variationName":"Two Tone","variationNumber":2,"numberOfGroups":2,"backgroundIsGroup":false,"strokeWidth":1,"defaultColours":{"group-1":"#000000","group-2":"#536DFE","background":"#FFFFFF"}}'
+                                    height="120"
+                                    width="120"></animated-icons>
+                </div>
+            </div>
+            <div class="card-value">@Model.TotalAlumnos</div>
+            <p class="card-description">Gestiona alumnos, sus expedientes y grupos asignados.</p>
+            <div class="card-actions">
+                <button onclick="location.href='@Url.Action("Students", "Students")'" class="action-btn view-btn">Ver alumnos</button>
+                <button onclick="location.href='@Url.Action("CreateEditStudent", "Students")'" class="action-btn add-btn">Inscribir Alumno</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* <script src="~/js/home-index.js" asp-append-version="true"></script> *@
+}
