@@ -38,7 +38,281 @@ public partial class CentroCulturalRegionalTlahuelilpanContext : DbContext
             new SqlParameter("@Taller_ID", tallerId));
     }
 
-    
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA DOCENTES *************************************/
+    public int InsertarDocente(string nombre, string apellidoPaterno, string apellidoMaterno = null,
+        string localidad = null, string numeroContacto = null, string email = null)
+    {
+        var docenteIdParam = new SqlParameter("@DocenteID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @DocenteID = sp_I_Docentes @Nombre, @Apellido_Paterno, @Apellido_Materno, @Localidad, @Numero_Contacto, @Email",
+            docenteIdParam,
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Apellido_Paterno", apellidoPaterno),
+            new SqlParameter("@Apellido_Materno", apellidoMaterno ?? (object)DBNull.Value),
+            new SqlParameter("@Localidad", localidad ?? (object)DBNull.Value),
+            new SqlParameter("@Numero_Contacto", numeroContacto ?? (object)DBNull.Value),
+            new SqlParameter("@Email", email ?? (object)DBNull.Value));
+
+        return (int)docenteIdParam.Value;
+    }
+
+    public int ActualizarDocente(int docenteId, string nombre, string apellidoPaterno, string apellidoMaterno = null,
+        string localidad = null, string numeroContacto = null, string email = null)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Docentes @Docente_ID, @Nombre, @Apellido_Paterno, @Apellido_Materno, @Localidad, @Numero_Contacto, @Email",
+            new SqlParameter("@Docente_ID", docenteId),
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Apellido_Paterno", apellidoPaterno),
+            new SqlParameter("@Apellido_Materno", apellidoMaterno ?? (object)DBNull.Value),
+            new SqlParameter("@Localidad", localidad ?? (object)DBNull.Value),
+            new SqlParameter("@Numero_Contacto", numeroContacto ?? (object)DBNull.Value),
+            new SqlParameter("@Email", email ?? (object)DBNull.Value));
+    }
+
+    public int EliminarDocente(int docenteId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Docentes @Docente_ID",
+            new SqlParameter("@Docente_ID", docenteId));
+    }
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA USUARIOS *************************************/
+    public int InsertarUsuario(int docenteId, string nombreUsuario, string contraseña, int rolId)
+    {
+        var usuarioIdParam = new SqlParameter("@UsuarioID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @UsuarioID = sp_I_Usuarios @Docente_ID, @Nombre_Usuario, @Contraseña, @Rol_ID",
+            usuarioIdParam,
+            new SqlParameter("@Docente_ID", docenteId),
+            new SqlParameter("@Nombre_Usuario", nombreUsuario),
+            new SqlParameter("@Contraseña", contraseña),
+            new SqlParameter("@Rol_ID", rolId));
+
+        return (int)usuarioIdParam.Value;
+    }
+
+    public int ActualizarUsuario(int usuarioId, int docenteId, string nombreUsuario, string contraseña, int rolId)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Usuarios @Usuario_ID, @Docente_ID, @Nombre_Usuario, @Contraseña, @Rol_ID",
+            new SqlParameter("@Usuario_ID", usuarioId),
+            new SqlParameter("@Docente_ID", docenteId),
+            new SqlParameter("@Nombre_Usuario", nombreUsuario),
+            new SqlParameter("@Contraseña", contraseña),
+            new SqlParameter("@Rol_ID", rolId));
+    }
+
+    public int EliminarUsuario(int usuarioId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Usuarios @Usuario_ID",
+            new SqlParameter("@Usuario_ID", usuarioId));
+    }
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA GRUPOS *************************************/
+    public int InsertarGrupo(int tallerId, int docenteId, string nombreGrupo, string horario,
+        string aula = null, DateTime? fechaInicio = null, DateTime? fechaFin = null, string estado = "En curso")
+    {
+        var grupoIdParam = new SqlParameter("@GrupoID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @GrupoID = sp_I_Grupos @Taller_ID, @Docente_ID, @Nombre_Grupo, @Horario, @Aula, @Fecha_Inicio, @Fecha_Fin, @Estado",
+            grupoIdParam,
+            new SqlParameter("@Taller_ID", tallerId),
+            new SqlParameter("@Docente_ID", docenteId),
+            new SqlParameter("@Nombre_Grupo", nombreGrupo),
+            new SqlParameter("@Horario", horario),
+            new SqlParameter("@Aula", aula ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Inicio", fechaInicio ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Fin", fechaFin ?? (object)DBNull.Value),
+            new SqlParameter("@Estado", estado));
+
+        return (int)grupoIdParam.Value;
+    }
+
+    public int ActualizarGrupo(int grupoId, int tallerId, int docenteId, string nombreGrupo, string horario,
+        string aula = null, DateTime? fechaInicio = null, DateTime? fechaFin = null, string estado = "En curso")
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Grupos @Grupo_ID, @Taller_ID, @Docente_ID, @Nombre_Grupo, @Horario, @Aula, @Fecha_Inicio, @Fecha_Fin, @Estado",
+            new SqlParameter("@Grupo_ID", grupoId),
+            new SqlParameter("@Taller_ID", tallerId),
+            new SqlParameter("@Docente_ID", docenteId),
+            new SqlParameter("@Nombre_Grupo", nombreGrupo),
+            new SqlParameter("@Horario", horario),
+            new SqlParameter("@Aula", aula ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Inicio", fechaInicio ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Fin", fechaFin ?? (object)DBNull.Value),
+            new SqlParameter("@Estado", estado));
+    }
+
+    public int EliminarGrupo(int grupoId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Grupos @Grupo_ID",
+            new SqlParameter("@Grupo_ID", grupoId));
+    }
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA ALUMNOS *************************************/
+    public int InsertarAlumno(string nombre, string apellidoPaterno, string apellidoMaterno = null,
+        DateTime? fechaNacimiento = null, string localidad = null, string numeroTelefono = null,
+        string correoElectronico = null, string adultoResponsable = null, string telefonoResponsable = null)
+    {
+        var alumnoIdParam = new SqlParameter("@AlumnoID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @AlumnoID = sp_I_Alumnos @Nombre, @Apellido_Paterno, @Apellido_Materno, @Fecha_Nacimiento, @Localidad, @Numero_Telefono, @Correo_Electronico, @Adulto_Responsable, @Telefono_Responsable",
+            alumnoIdParam,
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Apellido_Paterno", apellidoPaterno),
+            new SqlParameter("@Apellido_Materno", apellidoMaterno ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Nacimiento", fechaNacimiento ?? (object)DBNull.Value),
+            new SqlParameter("@Localidad", localidad ?? (object)DBNull.Value),
+            new SqlParameter("@Numero_Telefono", numeroTelefono ?? (object)DBNull.Value),
+            new SqlParameter("@Correo_Electronico", correoElectronico ?? (object)DBNull.Value),
+            new SqlParameter("@Adulto_Responsable", adultoResponsable ?? (object)DBNull.Value),
+            new SqlParameter("@Telefono_Responsable", telefonoResponsable ?? (object)DBNull.Value));
+
+        return (int)alumnoIdParam.Value;
+    }
+
+    public int ActualizarAlumno(int alumnoId, string nombre, string apellidoPaterno, string apellidoMaterno = null,
+        DateTime? fechaNacimiento = null, string localidad = null, string numeroTelefono = null,
+        string correoElectronico = null, string adultoResponsable = null, string telefonoResponsable = null)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Alumnos @Alumno_ID, @Nombre, @Apellido_Paterno, @Apellido_Materno, @Fecha_Nacimiento, @Localidad, @Numero_Telefono, @Correo_Electronico, @Adulto_Responsable, @Telefono_Responsable",
+            new SqlParameter("@Alumno_ID", alumnoId),
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Apellido_Paterno", apellidoPaterno),
+            new SqlParameter("@Apellido_Materno", apellidoMaterno ?? (object)DBNull.Value),
+            new SqlParameter("@Fecha_Nacimiento", fechaNacimiento ?? (object)DBNull.Value),
+            new SqlParameter("@Localidad", localidad ?? (object)DBNull.Value),
+            new SqlParameter("@Numero_Telefono", numeroTelefono ?? (object)DBNull.Value),
+            new SqlParameter("@Correo_Electronico", correoElectronico ?? (object)DBNull.Value),
+            new SqlParameter("@Adulto_Responsable", adultoResponsable ?? (object)DBNull.Value),
+            new SqlParameter("@Telefono_Responsable", telefonoResponsable ?? (object)DBNull.Value));
+    }
+
+    public int EliminarAlumno(int alumnoId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Alumnos @Alumno_ID",
+            new SqlParameter("@Alumno_ID", alumnoId));
+    }
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA EXPEDIENTES *************************************/
+    public int InsertarExpediente(int alumnoId, bool actaNacimiento = false, bool curp = false,
+        bool comprobanteDomicilio = false, bool ine = false, bool certificadoMedico = false,
+        bool reciboPago = false, bool fotografias = false, bool becado = false)
+    {
+        var expedienteIdParam = new SqlParameter("@ExpedienteID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @ExpedienteID = sp_I_Expedientes @Alumno_ID, @Acta_Nacimiento, @CURP, @Comprobante_Domicilio, @INE, @Certificado_Medico, @Recibo_Pago, @Fotografias, @Becado",
+            expedienteIdParam,
+            new SqlParameter("@Alumno_ID", alumnoId),
+            new SqlParameter("@Acta_Nacimiento", actaNacimiento),
+            new SqlParameter("@CURP", curp),
+            new SqlParameter("@Comprobante_Domicilio", comprobanteDomicilio),
+            new SqlParameter("@INE", ine),
+            new SqlParameter("@Certificado_Medico", certificadoMedico),
+            new SqlParameter("@Recibo_Pago", reciboPago),
+            new SqlParameter("@Fotografias", fotografias),
+            new SqlParameter("@Becado", becado));
+
+        return (int)expedienteIdParam.Value;
+    }
+
+    public int ActualizarExpediente(int expedienteId, int alumnoId, bool actaNacimiento = false, bool curp = false,
+        bool comprobanteDomicilio = false, bool ine = false, bool certificadoMedico = false,
+        bool reciboPago = false, bool fotografias = false, bool becado = false)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Expedientes @Expediente_ID, @Alumno_ID, @Acta_Nacimiento, @CURP, @Comprobante_Domicilio, @INE, @Certificado_Medico, @Recibo_Pago, @Fotografias, @Becado",
+            new SqlParameter("@Expediente_ID", expedienteId),
+            new SqlParameter("@Alumno_ID", alumnoId),
+            new SqlParameter("@Acta_Nacimiento", actaNacimiento),
+            new SqlParameter("@CURP", curp),
+            new SqlParameter("@Comprobante_Domicilio", comprobanteDomicilio),
+            new SqlParameter("@INE", ine),
+            new SqlParameter("@Certificado_Medico", certificadoMedico),
+            new SqlParameter("@Recibo_Pago", reciboPago),
+            new SqlParameter("@Fotografias", fotografias),
+            new SqlParameter("@Becado", becado));
+    }
+
+    public int EliminarExpediente(int expedienteId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Expedientes @Expediente_ID",
+            new SqlParameter("@Expediente_ID", expedienteId));
+    }
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA PROGRESO ESTUDIANTIL *************************************/
+    public int InsertarProgresoEstudiantil(int alumnoId, int grupoId, string estado = "Inscrito",
+        decimal? calificacion = null, decimal? asistencia = null)
+    {
+        var progresoIdParam = new SqlParameter("@ProgresoID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @ProgresoID = sp_I_Progreso_Estudiantil @Alumno_ID, @Grupo_ID, @Estado, @Calificacion, @Asistencia",
+            progresoIdParam,
+            new SqlParameter("@Alumno_ID", alumnoId),
+            new SqlParameter("@Grupo_ID", grupoId),
+            new SqlParameter("@Estado", estado),
+            new SqlParameter("@Calificacion", calificacion ?? (object)DBNull.Value),
+            new SqlParameter("@Asistencia", asistencia ?? (object)DBNull.Value));
+
+        return (int)progresoIdParam.Value;
+    }
+
+    public int ActualizarProgresoEstudiantil(int progresoId, int alumnoId, int grupoId, string estado = "Inscrito",
+        decimal? calificacion = null, decimal? asistencia = null)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Progreso_Estudiantil @Progreso_ID, @Alumno_ID, @Grupo_ID, @Estado, @Calificacion, @Asistencia",
+            new SqlParameter("@Progreso_ID", progresoId),
+            new SqlParameter("@Alumno_ID", alumnoId),
+            new SqlParameter("@Grupo_ID", grupoId),
+            new SqlParameter("@Estado", estado),
+            new SqlParameter("@Calificacion", calificacion ?? (object)DBNull.Value),
+            new SqlParameter("@Asistencia", asistencia ?? (object)DBNull.Value));
+    }
+
+    public int EliminarProgresoEstudiantil(int progresoId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Progreso_Estudiantil @Progreso_ID",
+            new SqlParameter("@Progreso_ID", progresoId));
+    } 
+
+    /************************************* PROCEDIMIENTOS ALMACENADOS PARA ROLES *************************************/
+    public int InsertarRol(string nombre, string descripcion = null)
+    {
+        var rolIdParam = new SqlParameter("@RolID", SqlDbType.Int) { Direction = ParameterDirection.Output };
+
+        Database.ExecuteSqlRaw(
+            "EXEC @RolID = sp_I_Roles @Nombre, @Descripcion",
+            rolIdParam,
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Descripcion", descripcion ?? (object)DBNull.Value));
+
+        return (int)rolIdParam.Value;
+    }
+
+    public int ActualizarRol(int rolId, string nombre, string descripcion = null)
+    {
+        return Database.ExecuteSqlRaw(
+            "EXEC sp_U_Roles @Rol_ID, @Nombre, @Descripcion",
+            new SqlParameter("@Rol_ID", rolId),
+            new SqlParameter("@Nombre", nombre),
+            new SqlParameter("@Descripcion", descripcion ?? (object)DBNull.Value));
+    }
+
+    public int EliminarRol(int rolId)
+    {
+        return Database.ExecuteSqlRaw("EXEC sp_D_Roles @Rol_ID",
+            new SqlParameter("@Rol_ID", rolId));
+    }
+
 
 
     public CentroCulturalRegionalTlahuelilpanContext()

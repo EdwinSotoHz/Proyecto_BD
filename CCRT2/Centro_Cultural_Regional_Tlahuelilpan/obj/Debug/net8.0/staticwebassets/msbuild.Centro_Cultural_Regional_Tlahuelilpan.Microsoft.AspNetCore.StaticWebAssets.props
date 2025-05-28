@@ -1674,24 +1674,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\src\img\WhatsApp Image 2025-05-20 at 1.49.35 PM.jpeg'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\src\img\WhatsApp Image 2025-05-25 at 4.28.55 PM.jpeg'))">
-      <SourceType>Package</SourceType>
-      <SourceId>Centro_Cultural_Regional_Tlahuelilpan</SourceId>
-      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/Centro_Cultural_Regional_Tlahuelilpan</BasePath>
-      <RelativePath>src/img/WhatsApp Image 2025-05-25 at 4.28.55 PM.jpeg</RelativePath>
-      <AssetKind>All</AssetKind>
-      <AssetMode>All</AssetMode>
-      <AssetRole>Primary</AssetRole>
-      <RelatedAsset></RelatedAsset>
-      <AssetTraitName></AssetTraitName>
-      <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>lu5n0lllp5</Fingerprint>
-      <Integrity>o36b4DsKLiyAErzyhBvGKy41SahnDFNboRubc7DtnWc=</Integrity>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\src\img\WhatsApp Image 2025-05-25 at 4.28.55 PM.jpeg'))</OriginalItemSpec>
-    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\src\img\WhatsApp Image 2025-05-25 at 4.29.14 PM.jpeg'))">
       <SourceType>Package</SourceType>
       <SourceId>Centro_Cultural_Regional_Tlahuelilpan</SourceId>

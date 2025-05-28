@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Centro_Cultural_Regional_Tlahuelilpan.Models.DBCRUDCORE;
 using Centro_Cultural_Regional_Tlahuelilpan.Models.ViewModels;
-
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
 using System.Text;
 using System.Diagnostics;
+using Microsoft.Data.SqlClient;
 
 namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
 {
@@ -47,7 +46,6 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
                 if (vm.objUsuario != null)
                 {
                     vm.objDocente = vm.objUsuario.Docente;
-                    //vm.objUsuario.Contraseña = "";
                 }
             }
 
@@ -57,7 +55,6 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
         [HttpPost]
         public IActionResult Confirm_CreateEditTeacherUser(TeachersUsersVM vm)
         {
-            
             if (!string.IsNullOrEmpty(vm.objUsuario.Contraseña))
             {
                 if (vm.objUsuario.Contraseña != vm.ConfirmarClave)
@@ -78,37 +75,49 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
 
             if (vm.objUsuario.UsuarioId == 0)
             {
-                // Crear nuevo docente
-                _DBContext.Docentes.Add(vm.objDocente);
-                _DBContext.SaveChanges();
+                // Crear nuevo docente usando SP
+                int docenteId = _DBContext.InsertarDocente(
+                    vm.objDocente.Nombre,
+                    vm.objDocente.ApellidoPaterno,
+                    vm.objDocente.ApellidoMaterno,
+                    vm.objDocente.Localidad,
+                    vm.objDocente.NumeroContacto,
+                    vm.objDocente.Email
+                );
 
-                // Asignar docente al usuario
-                vm.objUsuario.DocenteId = vm.objDocente.DocenteId;
-                _DBContext.Usuarios.Add(vm.objUsuario);
+                // Crear usuario asociado usando SP
+                _DBContext.InsertarUsuario(
+                    docenteId,
+                    vm.objUsuario.NombreUsuario,
+                    vm.objUsuario.Contraseña,
+                    vm.objUsuario.RolId
+                );
             }
             else
             {
-                // Actualizar docente
-                _DBContext.Docentes.Update(vm.objDocente);
+                // Actualizar docente usando SP
+                _DBContext.ActualizarDocente(
+                    vm.objDocente.DocenteId,
+                    vm.objDocente.Nombre,
+                    vm.objDocente.ApellidoPaterno,
+                    vm.objDocente.ApellidoMaterno,
+                    vm.objDocente.Localidad,
+                    vm.objDocente.NumeroContacto,
+                    vm.objDocente.Email
+                );
 
-                // Actualizar usuario (excepto contraseña si está vacía)
-                var existingUser = _DBContext.Usuarios.Find(vm.objUsuario.UsuarioId);
-                if (existingUser != null)
-                {
-                    existingUser.NombreUsuario = vm.objUsuario.NombreUsuario;
-                    existingUser.RolId = vm.objUsuario.RolId;
-
-                    if (!string.IsNullOrEmpty(vm.objUsuario.Contraseña))
-                    {
-                        existingUser.Contraseña = vm.objUsuario.Contraseña;
-                    }
-                }
+                // Actualizar usuario usando SP
+                _DBContext.ActualizarUsuario(
+                    vm.objUsuario.UsuarioId,
+                    vm.objDocente.DocenteId,
+                    vm.objUsuario.NombreUsuario,
+                    vm.objUsuario.Contraseña,
+                    vm.objUsuario.RolId
+                );
             }
 
-            _DBContext.SaveChanges();
             return RedirectToAction("Teachers");
         }
-
 
         [HttpGet]
         public IActionResult DeleteTeacher(int UsuarioId)
@@ -146,10 +155,9 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
                 return RedirectToAction("Teachers");
             }
 
-            // Eliminar usuario y docente
-            _DBContext.Usuarios.Remove(usuario);
-            _DBContext.Docentes.Remove(usuario.Docente);
-            _DBContext.SaveChanges();
+            // Eliminar usuario y docente usando SPs
+            _DBContext.EliminarUsuario(usuario.UsuarioId);
+            _DBContext.EliminarDocente(usuario.DocenteId);
 
             return RedirectToAction("Teachers");
         }

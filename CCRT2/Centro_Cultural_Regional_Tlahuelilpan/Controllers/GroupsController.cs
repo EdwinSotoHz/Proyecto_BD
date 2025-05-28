@@ -52,15 +52,39 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
         {
             if (vm.objGrupo.GrupoId == 0)
             {
-                _DBContext.Grupos.Add(vm.objGrupo);
+                // Insertar usando SP con conversión de DateOnly a DateTime
+                _DBContext.InsertarGrupo(
+                    vm.objGrupo.TallerId,
+                    vm.objGrupo.DocenteId,
+                    vm.objGrupo.NombreGrupo,
+                    vm.objGrupo.Horario,
+                    vm.objGrupo.Aula,
+                    vm.objGrupo.FechaInicio.HasValue ?
+                        vm.objGrupo.FechaInicio.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.objGrupo.FechaFin.HasValue ?
+                        vm.objGrupo.FechaFin.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.objGrupo.Estado
+                );
             }
             else
             {
-                _DBContext.Grupos.Update(vm.objGrupo);
+                // Actualizar usando SP con conversión de DateOnly a DateTime
+                _DBContext.ActualizarGrupo(
+                    vm.objGrupo.GrupoId,
+                    vm.objGrupo.TallerId,
+                    vm.objGrupo.DocenteId,
+                    vm.objGrupo.NombreGrupo,
+                    vm.objGrupo.Horario,
+                    vm.objGrupo.Aula,
+                    vm.objGrupo.FechaInicio.HasValue ?
+                        vm.objGrupo.FechaInicio.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.objGrupo.FechaFin.HasValue ?
+                        vm.objGrupo.FechaFin.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.objGrupo.Estado
+                );
             }
-            _DBContext.SaveChanges();
+
             return RedirectToAction("Groups");
-            
 
             // Recargar listas si hay error
             vm.lstTalleres = _DBContext.Talleres.Select(t => new SelectListItem
@@ -113,8 +137,8 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
                 return RedirectToAction("Delete", new { grupoId = grupoId });
             }
 
-            _DBContext.Grupos.Remove(grupo);
-            _DBContext.SaveChanges();
+            // Eliminar usando SP
+            _DBContext.EliminarGrupo(grupoId);
 
             return RedirectToAction("Groups");
         }

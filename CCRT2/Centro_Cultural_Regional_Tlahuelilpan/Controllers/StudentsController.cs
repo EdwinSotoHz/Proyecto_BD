@@ -88,77 +88,96 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
         {
             if (vm.Alumno.AlumnoId == 0)
             {
-                // Crear nuevo alumno
-                _DBContext.Alumnos.Add(vm.Alumno);
-                _DBContext.SaveChanges();
+                int alumnoId = _DBContext.InsertarAlumno(
+                    vm.Alumno.Nombre,
+                    vm.Alumno.ApellidoPaterno,
+                    vm.Alumno.ApellidoMaterno,
+                    vm.Alumno.FechaNacimiento.HasValue ?
+                        vm.Alumno.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.Alumno.Localidad,
+                    vm.Alumno.NumeroTelefono,
+                    null,
+                    vm.Alumno.AdultoResponsable,
+                    vm.Alumno.TelefonoResponsable
+                );
 
-                // Asignar expediente con ID del nuevo alumno
-                var expediente = new Expediente
-                {
-                    AlumnoId = vm.Alumno.AlumnoId,
-                    ActaNacimiento = vm.ActaNacimiento,
-                    Curp = vm.Curp,
-                    ComprobanteDomicilio = vm.ComprobanteDomicilio,
-                    Ine = vm.Ine,
-                    CertificadoMedico = vm.CertificadoMedico,
-                    ReciboPago = vm.ReciboPago,
-                    Fotografias = vm.Fotografias,
-                    DocumentosCompletos = vm.DocumentosCompletos,
-                    Becado = vm.Becado
-                };
+                _DBContext.InsertarExpediente(
+                    alumnoId,
+                    vm.ActaNacimiento,
+                    vm.Curp,
+                    vm.ComprobanteDomicilio,
+                    vm.Ine,
+                    vm.CertificadoMedico,
+                    vm.ReciboPago,
+                    vm.Fotografias,
+                    vm.Becado
+                );
 
-                _DBContext.Expedientes.Add(expediente);
+                TempData["SuccessMessage"] = "✅ Alumno guardado exitosamente.";
+                TempData["Direction"] = "Admin";
+
+                return RedirectToAction("Details", new { id = alumnoId }); // Aquí usamos el ID real
             }
             else
             {
-                // 📝 Actualizar alumno
-                _DBContext.Alumnos.Update(vm.Alumno);
+                // Actualizar alumno usando SP
+                _DBContext.ActualizarAlumno(
+                    vm.Alumno.AlumnoId,
+                    vm.Alumno.Nombre,
+                    vm.Alumno.ApellidoPaterno,
+                    vm.Alumno.ApellidoMaterno,
+                    vm.Alumno.FechaNacimiento.HasValue ?
+                        vm.Alumno.FechaNacimiento.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    vm.Alumno.Localidad,
+                    vm.Alumno.NumeroTelefono,
+                    null, // CorreoElectronico
+                    vm.Alumno.AdultoResponsable,
+                    vm.Alumno.TelefonoResponsable
+                );
 
-                // 📁 Obtener expediente existente o crear uno si no existe
+                // Verificar si existe expediente
                 var existingExpediente = _DBContext.Expedientes
                     .FirstOrDefault(e => e.AlumnoId == vm.Alumno.AlumnoId);
 
                 if (existingExpediente != null)
                 {
-                    // Actualizar campos
-                    existingExpediente.ActaNacimiento = vm.ActaNacimiento;
-                    existingExpediente.Curp = vm.Curp;
-                    existingExpediente.ComprobanteDomicilio = vm.ComprobanteDomicilio;
-                    existingExpediente.Ine = vm.Ine;
-                    existingExpediente.CertificadoMedico = vm.CertificadoMedico;
-                    existingExpediente.ReciboPago = vm.ReciboPago;
-                    existingExpediente.Fotografias = vm.Fotografias;
-                    existingExpediente.DocumentosCompletos = vm.DocumentosCompletos;
-                    existingExpediente.Becado = vm.Becado;
-
-                    _DBContext.Expedientes.Update(existingExpediente);
+                    // Actualizar expediente usando SP
+                    _DBContext.ActualizarExpediente(
+                        existingExpediente.ExpedienteId,
+                        vm.Alumno.AlumnoId,
+                        vm.ActaNacimiento,
+                        vm.Curp,
+                        vm.ComprobanteDomicilio,
+                        vm.Ine,
+                        vm.CertificadoMedico,
+                        vm.ReciboPago,
+                        vm.Fotografias,
+                        vm.Becado
+                    );
                 }
                 else
                 {
-                    // Si no tiene expediente aún, créalo
-                    var newExpediente = new Expediente
-                    {
-                        AlumnoId = vm.Alumno.AlumnoId,
-                        ActaNacimiento = vm.ActaNacimiento,
-                        Curp = vm.Curp,
-                        ComprobanteDomicilio = vm.ComprobanteDomicilio,
-                        Ine = vm.Ine,
-                        CertificadoMedico = vm.CertificadoMedico,
-                        ReciboPago = vm.ReciboPago,
-                        Fotografias = vm.Fotografias,
-                        DocumentosCompletos = vm.DocumentosCompletos
-                    };
-                    _DBContext.Expedientes.Add(newExpediente);
+                    // Crear nuevo expediente usando SP
+                    _DBContext.InsertarExpediente(
+                        vm.Alumno.AlumnoId,
+                        vm.ActaNacimiento,
+                        vm.Curp,
+                        vm.ComprobanteDomicilio,
+                        vm.Ine,
+                        vm.CertificadoMedico,
+                        vm.ReciboPago,
+                        vm.Fotografias,
+                        vm.Becado
+                    );
                 }
             }
 
-            _DBContext.SaveChanges();
             TempData["SuccessMessage"] = "✅ Alumno guardado exitosamente.";
             TempData["Direction"] = "Admin";
             return RedirectToAction("Details", new { id = vm.Alumno.AlumnoId });
         }
 
-        // Eliminar alumno (sin cambios)
+        // Eliminar alumno
         [HttpGet]
         public IActionResult DeleteStudent(int id)
         {
@@ -178,8 +197,6 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
         [HttpPost]
         public IActionResult Confirm_DeleteStudent(int AlumnoId)
         {
-            
-
             var alumno = _DBContext.Alumnos
                 .Include(a => a.Expediente)
                 .Include(a => a.ProgresoEstudiantils)
@@ -190,14 +207,20 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
                 return NotFound();
             }
 
-            _DBContext.ProgresoEstudiantils.RemoveRange(alumno.ProgresoEstudiantils);
-            if (alumno.Expediente != null)
+            // Eliminar progresos estudiantiles usando SP
+            foreach (var progreso in alumno.ProgresoEstudiantils)
             {
-                _DBContext.Expedientes.Remove(alumno.Expediente);
+                _DBContext.EliminarProgresoEstudiantil(progreso.ProgresoId);
             }
 
-            _DBContext.Alumnos.Remove(alumno);
-            _DBContext.SaveChanges();
+            // Eliminar expediente si existe
+            if (alumno.Expediente != null)
+            {
+                _DBContext.EliminarExpediente(alumno.Expediente.ExpedienteId);
+            }
+
+            // Eliminar alumno usando SP
+            _DBContext.EliminarAlumno(alumno.AlumnoId);
 
             return RedirectToAction("Students");
         }
@@ -256,25 +279,21 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
                 return RedirectToAction("AddToGroup", new { id = vm.AlumnoId });
             }
 
-            // Crear nuevo progreso estudiantil
-            var progreso = new ProgresoEstudiantil
-            {
-                AlumnoId = vm.AlumnoId,
-                GrupoId = vm.GrupoId,
-                Estado = "Inscrito",
-                Calificacion = null,
-                Asistencia = null
-            };
-
-            _DBContext.ProgresoEstudiantils.Add(progreso);
-            _DBContext.SaveChanges();
+            // Crear nuevo progreso estudiantil usando SP
+            _DBContext.InsertarProgresoEstudiantil(
+                vm.AlumnoId,
+                vm.GrupoId,
+                "Inscrito",
+                null, // Calificacion
+                null  // Asistencia
+            );
 
             TempData["SuccessMessage"] = "✅ Alumno inscrito exitosamente en el grupo.";
             TempData["Direction"] = "Admin";
             return RedirectToAction("Details", new { id = vm.AlumnoId });
         }
 
-        /**************************** REPORTE *************************/
+        // Métodos para reportes (sin cambios)
         [HttpGet]
         public IActionResult GraduatesList()
         {
@@ -322,6 +341,5 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
 
             return File(pdfBytes, "application/pdf", $"Acuse_Egresados_{DateTime.Now:yyyy-MM-dd}.pdf");
         }
-
     }
 }

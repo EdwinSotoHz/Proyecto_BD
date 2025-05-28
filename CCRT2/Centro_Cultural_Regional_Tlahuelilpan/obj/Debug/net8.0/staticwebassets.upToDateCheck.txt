@@ -90,6 +90,5 @@ wwwroot\src\img\musica.jpg
 wwwroot\src\img\percusiones.jpg
 wwwroot\src\img\violin.jpg
 wwwroot\src\img\WhatsApp Image 2025-05-20 at 1.49.35 PM.jpeg
-wwwroot\src\img\WhatsApp Image 2025-05-25 at 4.28.55 PM.jpeg
 wwwroot\src\img\WhatsApp Image 2025-05-25 at 4.29.14 PM.jpeg
 wwwroot\src\img\YOGA.jpg

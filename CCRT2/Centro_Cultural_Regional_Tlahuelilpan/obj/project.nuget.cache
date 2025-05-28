@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Mi46IGNwT7Y=",
+  "dgSpecHash": "2vSfCDwQ3Fs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\edwin\\Documents\\ASP\\PorCulpaDeLaTalhiaTuveQueCrearEsteRepo\\CCRT2\\Centro_Cultural_Regional_Tlahuelilpan\\Centro_Cultural_Regional_Tlahuelilpan.csproj",
+  "projectFilePath": "C:\\Users\\edwin\\Documents\\ASP\\Proyecto_BD\\CCRT2\\Centro_Cultural_Regional_Tlahuelilpan\\Centro_Cultural_Regional_Tlahuelilpan.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\edwin\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\edwin\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
