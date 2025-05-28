@@ -12,11 +12,27 @@
 <div class="students-container">
     <div class="students-header">
         <h1 class="students-title">Alumnos Egresados</h1>
+
         <a class="btn-back" asp-action="Students" asp-controller="Students">
             <i class="fas fa-arrow-left"></i> Regresar
         </a>
+
         <a asp-action="DownloadGraduatesPdf" asp-controller="Students" class="btn-download">
-            <i class="fas fa-file-pdf"></i> Descargar Acuse
+            <i class="fas fa-file-pdf"></i> Descargar Acuse (Egresados)
+        </a>
+    </div>
+    <div class="students-header">
+        <!-- Nuevos botones -->
+        <a asp-action="DownloadGroupsAndWorkshopsPdf" asp-controller="Students" class="btn-download">
+            <i class="fas fa-file-pdf"></i> Descargar Grupos y Talleres
+        </a>
+
+        <a asp-action="DownloadStudentDocumentsPdf" asp-controller="Students" class="btn-download">
+            <i class="fas fa-file-pdf"></i> Descargar Expedientes Alumnos
+        </a>
+
+        <a asp-action="DownloadProgressPdf" asp-controller="Students" class="btn-download">
+            <i class="fas fa-file-pdf"></i> Descargar Progreso Alumnos
         </a>
     </div>
 

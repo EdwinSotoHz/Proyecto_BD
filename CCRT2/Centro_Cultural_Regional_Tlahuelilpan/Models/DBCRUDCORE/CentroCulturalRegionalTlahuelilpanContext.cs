@@ -340,6 +340,12 @@ public partial class CentroCulturalRegionalTlahuelilpanContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    public virtual DbSet<VistaAlumnosExpediente> VistaAlumnosExpedientes { get; set; }
+
+    public virtual DbSet<VistaGruposTallere> VistaGruposTalleres { get; set; }
+
+    public virtual DbSet<VistaProgresoAlumno> VistaProgresoAlumnos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // La configuración ahora se hace desde Program.cs
@@ -601,6 +607,77 @@ public partial class CentroCulturalRegionalTlahuelilpanContext : DbContext
                 .HasForeignKey(d => d.RolId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Usuarios_Roles");
+        });
+
+
+        /******************************************* VISTAS *******************************************/
+
+        modelBuilder.Entity<VistaAlumnosExpediente>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vista_Alumnos_Expedientes");
+
+            entity.Property(e => e.AlumnoId).HasColumnName("Alumno_ID");
+            entity.Property(e => e.ApellidoMaterno)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Apellido_Materno");
+            entity.Property(e => e.ApellidoPaterno)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Apellido_Paterno");
+            entity.Property(e => e.DocumentosCompletos).HasColumnName("Documentos_Completos");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+        modelBuilder.Entity<VistaGruposTallere>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vista_Grupos_Talleres");
+
+            entity.Property(e => e.Aula)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.Duracion)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Estado)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.GrupoId).HasColumnName("Grupo_ID");
+            entity.Property(e => e.Horario)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.NombreGrupo)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("Nombre_Grupo");
+            entity.Property(e => e.NombreTaller)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("Nombre_Taller");
+            entity.Property(e => e.Precio).HasColumnType("decimal(10, 2)");
+        });
+
+        modelBuilder.Entity<VistaProgresoAlumno>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("Vista_Progreso_Alumnos");
+
+            entity.Property(e => e.Asistencia).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.Calificacion).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.Estado)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.NombreCompleto)
+                .HasMaxLength(101)
+                .IsUnicode(false)
+                .HasColumnName("Nombre_Completo");
+            entity.Property(e => e.ProgresoId).HasColumnName("Progreso_ID");
         });
 
         OnModelCreatingPartial(modelBuilder);

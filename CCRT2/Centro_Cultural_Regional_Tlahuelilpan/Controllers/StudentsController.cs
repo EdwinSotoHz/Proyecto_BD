@@ -341,5 +341,34 @@ namespace Centro_Cultural_Regional_Tlahuelilpan.Controllers
 
             return File(pdfBytes, "application/pdf", $"Acuse_Egresados_{DateTime.Now:yyyy-MM-dd}.pdf");
         }
+
+
+        /***************************************************** USO DE LAS VISTAS *****************************************************/
+        [HttpGet]
+        public IActionResult DownloadGroupsAndWorkshopsPdf()
+        {
+            var data = _DBContext.VistaGruposTalleres.ToList();
+            var pdfGenerator = new GroupsAndWorkshopsPdfGenerator(data);
+            byte[] pdfBytes = pdfGenerator.GeneratePdf();
+            return File(pdfBytes, "application/pdf", $"Grupos_y_Talleres_{DateTime.Now:yyyy-MM-dd}.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult DownloadStudentDocumentsPdf()
+        {
+            var data = _DBContext.VistaAlumnosExpedientes.ToList();
+            var pdfGenerator = new StudentDocumentsPdfGenerator(data);
+            byte[] pdfBytes = pdfGenerator.GeneratePdf();
+            return File(pdfBytes, "application/pdf", $"Expedientes_Alumnos_{DateTime.Now:yyyy-MM-dd}.pdf");
+        }
+
+        [HttpGet]
+        public IActionResult DownloadProgressPdf()
+        {
+            var data = _DBContext.VistaProgresoAlumnos.ToList();
+            var pdfGenerator = new ProgressPdfGenerator(data);
+            byte[] pdfBytes = pdfGenerator.GeneratePdf();
+            return File(pdfBytes, "application/pdf", $"Progreso_Alumnos_{DateTime.Now:yyyy-MM-dd}.pdf");
+        }
     }
 }
